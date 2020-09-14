@@ -20,7 +20,7 @@
 #include <future>
 #include <chrono>
 #include "Core/mvThreadPool.h"
-#include "Core/AppItems/mvAppItems.h"
+#include "Core/mvAppItems.h"
 #include <frameobject.h>
 
 namespace Marvel {
@@ -149,11 +149,19 @@ namespace Marvel {
 		{
 			if (m_tpool != nullptr)
 			{
-				delete m_tpool;
-				m_tpool = nullptr;
-				m_threadTime = 0.0;
-				m_threadPool = false;
-				mvAppLog::Log("Threadpool destroyed");
+
+				// set pool to delete when finishing last task
+				m_tpool->setDone();
+
+				// check if last task is complete
+				if (m_tpool->isReadyToDelete())
+				{
+					delete m_tpool;
+					m_tpool = nullptr;
+					m_threadTime = 0.0;
+					m_threadPool = false;
+					mvAppLog::Log("Threadpool destroyed");
+				}
 			}
 
 		}
@@ -201,12 +209,7 @@ namespace Marvel {
 			if (item == nullptr)
 				m_activeWindow = "MainWindow";
 			else
-			{
 				dispatchRenderCallback<mvWindowAppitem>(mvAppItemType::Window, item);
-				dispatchRenderCallback<mvChild>(mvAppItemType::Child, item);
-				dispatchRenderCallback<mvPopup>(mvAppItemType::Popup, item);
-				dispatchRenderCallback<mvMenu>(mvAppItemType::Menu, item);
-			}
 		}
 
 		// resets app items states (i.e. hovered)
@@ -700,7 +703,7 @@ namespace Marvel {
 
 			PyObject* result = PyObject_CallObject(callback, pArgs);
 
-			// check if call succeded
+			// check if call succeeded
 			if (!result)
 			{
 				PyErr_Print();
@@ -784,7 +787,7 @@ namespace Marvel {
 
 		PyObject* result = PyObject_CallObject(callable, pArgs);
 
-		// check if call succeded
+		// check if call succeeded
 		if (!result)
 		{
 			PyErr_Print();

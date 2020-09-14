@@ -40,7 +40,8 @@ namespace Marvel {
         ColorPicker3, ColorPicker4, Tooltip, CollapsingHeader, 
         Separator, Checkbox, Listbox, Text, LabelText, Combo, 
         Plot, SimplePlot, Indent, Unindent, Drawing, Window,
-        Popup, Selectable, TreeNode, ProgressBar, Table, Dummy
+        Popup, Selectable, TreeNode, ProgressBar, Table, Dummy,
+        PieChart, ImageButton
     };
 
     //-----------------------------------------------------------------------------
@@ -127,7 +128,7 @@ namespace Marvel {
         void                                addChild                  (mvAppItem* child);
         inline void                         show                      ()                        { m_show = true; }
         inline void                         hide                      ()                        { m_show = false; }
-        inline void                         setCallback               (PyObject* callback)      { m_callback = callback; }
+        void                                setCallback               (PyObject* callback);
         inline void                         setCallbackData           (PyObject* data)          { m_callbackData = data; }
         inline void                         setPopup                  (const std::string& popup){ m_popup = popup; }
         inline void                         setTip                    (const std::string& tip)  { m_tip = tip; }
